@@ -177,7 +177,7 @@ const SignUp = () => {
                 <Input
                   type="text"
                   name="registrationNumber"
-                  placeholder="e.g., REG123456"
+                  placeholder="e.g., GOU/UCC/CSC/839"
                   value={formData.registrationNumber}
                   onChange={handleChange}
                   hasError={!!errors.registrationNumber}
