@@ -44,7 +44,7 @@ const Home = () => {
         </div>
        </PublishedPapers>
        <footer style={{textAlign: "center", marginTop: "50px", padding: "20px", borderTop: "1px solid #444"}}>
-        <p>&copy; 2024 FCIT Journal Platform. All rights reserved.</p>
+        <p>&copy; 2026 FCIT Journal Platform. All rights reserved.</p>
        </footer>
     </>
   );
