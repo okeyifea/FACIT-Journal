@@ -10,7 +10,7 @@
 }
 
 a {
-  color: white;
+  color: black;
   font-weight: 500;
   text-decoration: inherit;
   transition: all 0.3s ease;
@@ -25,8 +25,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #0f1724;
-  color: #e6eef8;
+  color: black;
 }
 
 h1 {

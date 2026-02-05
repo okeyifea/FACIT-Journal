@@ -5,8 +5,7 @@ export const LoginCard = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0f1724 0%, #1a1f2e 100%);
+  max-height: 100vh;
   padding: 20px;
 
   > div:first-child {
@@ -62,6 +61,7 @@ export const LoginContainer = styled.div`
       flex-direction: column;
       width: 100%;
       gap: 8px;
+      color: white;
 
       p {
         font-size: 14px;
