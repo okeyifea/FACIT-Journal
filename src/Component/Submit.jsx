@@ -1,85 +1,82 @@
 import React from "react";
 import styled from "styled-components";
-import Header from "./Header";
+//import Header from "./Header";
+import Layout from "./Common/layout";
+import SideNav from "./SideNav";
 
-const Submit = () => {
+const Submit = ({ user, setUser }) => {
     return (
-        <SubmitPageWrapper>
-          <Header />
-          <SubmitContainer>
-            <HeaderSection>
-              <h1>Submit Your Research Paper</h1>
-              <p>Contribute to our growing collection of academic research</p>
-            </HeaderSection>
-            
-            <FormWrapper>
-              <form>
-                <FormGroup>
-                    <Label htmlFor="title">Paper Title *</Label>
-                    <Input type="text" id="title" name="title" placeholder="Enter the title of your research paper" required />
-                </FormGroup>
+        <Layout>
+          <SideNav user={user} onLogout={() => setUser?.(null)} />
+          <Main>
+            <SubmitContainer>
+              <HeaderSection>
+                <h1>Submit Your Research Paper</h1>
+                <p>Contribute to our growing collection of academic research</p>
+              </HeaderSection>
+              
+              <FormWrapper>
+                <form>
+                  <FormGroup>
+                      <Label htmlFor="title">Paper Title *</Label>
+                      <Input type="text" id="title" name="title" placeholder="Enter the title of your research paper" required />
+                  </FormGroup>
 
-                <FormGroup>
-                    <Label htmlFor="authors">Authors *</Label>
-                    <Input type="text" id="authors" name="authors" placeholder="Enter author names (comma-separated)" required />
-                </FormGroup>
+                  <FormGroup>
+                      <Label htmlFor="authors">Authors *</Label>
+                      <Input type="text" id="authors" name="authors" placeholder="Enter author names (comma-separated)" required />
+                  </FormGroup>
 
-                <FormGroup>
-                    <Label htmlFor="category">Research Category *</Label>
-                    <Select id="category" name="category" required>
-                      <option value="">Select a category</option>
-                      <option value="ai">Artificial Intelligence</option>
-                      <option value="cloud">Cloud Computing</option>
-                      <option value="security">Cybersecurity</option>
-                      <option value="quantum">Quantum Computing</option>
-                      <option value="blockchain">Blockchain</option>
-                      <option value="data">Data Science</option>
-                      <option value="other">Other</option>
-                    </Select>
-                </FormGroup>
+                  <FormGroup>
+                      <Label htmlFor="category">Research Category *</Label>
+                      <Select id="category" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="ai">Artificial Intelligence</option>
+                        <option value="cloud">Cloud Computing</option>
+                        <option value="security">Cybersecurity</option>
+                        <option value="quantum">Quantum Computing</option>
+                        <option value="blockchain">Blockchain</option>
+                        <option value="data">Data Science</option>
+                        <option value="other">Other</option>
+                      </Select>
+                  </FormGroup>
 
-                <FormGroup>
-                    <Label htmlFor="abstract">Abstract *</Label>
-                    <TextArea id="abstract" name="abstract" rows="6" placeholder="Provide a brief summary of your research (150-250 words)" required></TextArea>
-                </FormGroup>
+                  <FormGroup>
+                      <Label htmlFor="abstract">Abstract *</Label>
+                      <TextArea id="abstract" name="abstract" rows="6" placeholder="Provide a brief summary of your research (150-250 words)" required></TextArea>
+                  </FormGroup>
 
-                <FormGroup>
-                    <Label htmlFor="keywords">Keywords *</Label>
-                    <Input type="text" id="keywords" name="keywords" placeholder="Enter keywords (comma-separated)" required />
-                </FormGroup>
+                  <FormGroup>
+                      <Label htmlFor="keywords">Keywords *</Label>
+                      <Input type="text" id="keywords" name="keywords" placeholder="Enter keywords (comma-separated)" required />
+                  </FormGroup>
 
-                <FormGroup>
-                    <Label htmlFor="file">Upload Paper (PDF) *</Label>
-                    <FileInput type="file" id="file" name="file" accept="application/pdf" required />
-                    <FileHelp>Maximum file size: 10MB. PDF format only.</FileHelp>
-                </FormGroup>
+                  <FormGroup>
+                      <Label htmlFor="file">Upload Paper (PDF) *</Label>
+                      <FileInput type="file" id="file" name="file" accept="application/pdf" required />
+                      <FileHelp>Maximum file size: 10MB. PDF format only.</FileHelp>
+                  </FormGroup>
 
-                <FormGroup>
-                    <CheckboxLabel>
-                      <input type="checkbox" required />
-                      <span>I confirm that this is original work and grant permission for publication</span>
-                    </CheckboxLabel>
-                </FormGroup>
+                  <FormGroup>
+                      <CheckboxLabel>
+                        <input type="checkbox" required />
+                        <span>I confirm that this is original work and grant permission for publication</span>
+                      </CheckboxLabel>
+                  </FormGroup>
 
-                <ButtonGroup>
-                  <SubmitButton type="submit">Submit Paper</SubmitButton>
-                  <ResetButton type="reset">Clear Form</ResetButton>
-                </ButtonGroup>
-              </form>
-            </FormWrapper>
-          </SubmitContainer>
-        </SubmitPageWrapper>
+                  <ButtonGroup>
+                    <SubmitButton type="submit">Submit Paper</SubmitButton>
+                    <ResetButton type="reset">Clear Form</ResetButton>
+                  </ButtonGroup>
+                </form>
+              </FormWrapper>
+            </SubmitContainer>
+          </Main>
+        </Layout>
     );
 };
 
 export default Submit;
-
-const SubmitPageWrapper = styled.div`
-  width: 100%;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0f1724 0%, #1a1f2e 100%);
-  padding-top: 75px;
-`;
 
 const SubmitContainer = styled.div`
   max-width: 800px;
@@ -90,6 +87,7 @@ const SubmitContainer = styled.div`
     padding: 40px 20px;
   }
 `;
+const Main = styled.main``;
 
 const HeaderSection = styled.div`
   text-align: center;
@@ -345,4 +343,4 @@ const ResetButton = styled.button`
   @media (max-width: 768px) {
     width: 100%;
   }
-`;  
+`;

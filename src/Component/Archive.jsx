@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Header from "./Header";
 
-const Archive = () => {
+import Layout from "../Component/Common/layout";
+import SideNav from "./SideNav";
+
+const Archive = ({user, setUser}) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("recent");
@@ -99,104 +102,105 @@ const Archive = () => {
   ];
 
   return (
-    <ArchivePageWrapper>
-      <Header />
-      
-      <ArchiveHeader>
-        <h1>Research Archive</h1>
-        <p>Explore our collection of published research papers and academic articles</p>
-      </ArchiveHeader>
+    <Layout>
+      <SideNav user={user} setUser={setUser} />
+      <Main>
+        <ArchiveHeader>
+          <h1>Research Archive</h1>
+          <p>Explore our collection of published research papers and academic articles</p>
+        </ArchiveHeader>
 
-      <ArchiveContainer>
-        {/* Search and Filter Section */}
-        <SearchFilterSection>
-          <SearchBox>
-            <input
-              type="text"
-              placeholder="Search papers by title or author..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button>🔍</button>
-          </SearchBox>
+        <ArchiveContainer>
+          {/* Search and Filter Section */}
+          <SearchFilterSection>
+            <SearchBox>
+              <input
+                type="text"
+                placeholder="Search papers by title or author..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button>🔍</button>
+            </SearchBox>
 
-          <Controls>
-            <SortDropdown value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="recent">Sort by: Most Recent</option>
-              <option value="citations">Sort by: Citations</option>
-              <option value="title">Sort by: Title A-Z</option>
-            </SortDropdown>
+            <Controls>
+              <SortDropdown value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <option value="recent">Sort by: Most Recent</option>
+                <option value="citations">Sort by: Citations</option>
+                <option value="title">Sort by: Title A-Z</option>
+              </SortDropdown>
 
-            <ResultCount>
-              {filteredPapers.length} paper{filteredPapers.length !== 1 ? "s" : ""} found
-            </ResultCount>
-          </Controls>
-        </SearchFilterSection>
+              <ResultCount>
+                {filteredPapers.length} paper{filteredPapers.length !== 1 ? "s" : ""} found
+              </ResultCount>
+            </Controls>
+          </SearchFilterSection>
 
-        <ContentWrapper>
-          {/* Sidebar Categories */}
-          <Sidebar>
-            <CategoryTitle>Categories</CategoryTitle>
-            <CategoryList>
-              {categories.map(cat => (
-                <CategoryItem
-                  key={cat.id}
-                  active={selectedCategory === cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                >
-                  <span>{cat.label}</span>
-                  <badge>{cat.count}</badge>
-                </CategoryItem>
-              ))}
-            </CategoryList>
-          </Sidebar>
-
-          {/* Papers List */}
-          <PapersSection>
-            {filteredPapers.length > 0 ? (
-              <PapersList>
-                {filteredPapers.map(paper => (
-                  <PaperCard key={paper.id}>
-                    <PaperHeader>
-                      <h3>{paper.title}</h3>
-                      <Badge>{paper.year}</Badge>
-                    </PaperHeader>
-
-                    <PaperMeta>
-                      <MetaItem>
-                        <strong>Authors:</strong> {paper.authors}
-                      </MetaItem>
-                      <MetaItem>
-                        <strong>Published:</strong> {paper.date}
-                      </MetaItem>
-                      <MetaItem>
-                        <strong>Citations:</strong> {paper.citations}
-                      </MetaItem>
-                    </PaperMeta>
-
-                    <PaperAbstract>
-                      <h4>Abstract</h4>
-                      <p>{paper.abstract}</p>
-                    </PaperAbstract>
-
-                    <PaperActions>
-                      <ActionButton primary>View Full Paper</ActionButton>
-                      <ActionButton>Download PDF</ActionButton>
-                      <ActionButton>Cite</ActionButton>
-                    </PaperActions>
-                  </PaperCard>
+          <ContentWrapper>
+            {/* Sidebar Categories */}
+            <Sidebar>
+              <CategoryTitle>Categories</CategoryTitle>
+              <CategoryList>
+                {categories.map(cat => (
+                  <CategoryItem
+                    key={cat.id}
+                    active={selectedCategory === cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                  >
+                    <span>{cat.label}</span>
+                    <badge>{cat.count}</badge>
+                  </CategoryItem>
                 ))}
-              </PapersList>
-            ) : (
-              <NoResults>
-                <p>No papers found matching your criteria.</p>
-                <small>Try adjusting your search or filter options</small>
-              </NoResults>
-            )}
-          </PapersSection>
-        </ContentWrapper>
-      </ArchiveContainer>
-    </ArchivePageWrapper>
+              </CategoryList>
+            </Sidebar>
+
+            {/* Papers List */}
+            <PapersSection>
+              {filteredPapers.length > 0 ? (
+                <PapersList>
+                  {filteredPapers.map(paper => (
+                    <PaperCard key={paper.id}>
+                      <PaperHeader>
+                        <h3>{paper.title}</h3>
+                        <Badge>{paper.year}</Badge>
+                      </PaperHeader>
+
+                      <PaperMeta>
+                        <MetaItem>
+                          <strong>Authors:</strong> {paper.authors}
+                        </MetaItem>
+                        <MetaItem>
+                          <strong>Published:</strong> {paper.date}
+                        </MetaItem>
+                        <MetaItem>
+                          <strong>Citations:</strong> {paper.citations}
+                        </MetaItem>
+                      </PaperMeta>
+
+                      <PaperAbstract>
+                        <h4>Abstract</h4>
+                        <p>{paper.abstract}</p>
+                      </PaperAbstract>
+
+                      <PaperActions>
+                        <ActionButton primary>View Full Paper</ActionButton>
+                        <ActionButton>Download PDF</ActionButton>
+                        <ActionButton>Cite</ActionButton>
+                      </PaperActions>
+                    </PaperCard>
+                  ))}
+                </PapersList>
+              ) : (
+                <NoResults>
+                  <p>No papers found matching your criteria.</p>
+                  <small>Try adjusting your search or filter options</small>
+                </NoResults>
+              )}
+            </PapersSection>
+          </ContentWrapper>
+        </ArchiveContainer>
+      </Main>
+    </Layout>
   );
 };
 
@@ -205,7 +209,6 @@ export default Archive;
 const ArchivePageWrapper = styled.div`
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f1724 0%, #1a1f2e 100%);
   padding-top: 75px;
 `;
 
@@ -255,6 +258,7 @@ const ArchiveContainer = styled.div`
   }
 `;
 
+const Main = styled.main``;
 const SearchFilterSection = styled.div`
   margin-bottom: 40px;
   display: flex;
