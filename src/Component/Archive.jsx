@@ -1,105 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import styled from "styled-components";
 import Header from "./Header";
 
 import Layout from "../Component/Common/layout";
 import SideNav from "./SideNav";
+import { API_URL } from "../../server/API/Auth.js";
 
-const Archive = ({user, setUser}) => {
+const Archive = ({ user, setUser }) => {
+  const [papers, setPapers] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("recent");
 
-  // Sample archived papers data
-  const papers = [
-    {
-      id: 1,
-      title: "Advanced Machine Learning Techniques",
-      authors: "Dr. Smith, Prof. Johnson",
-      category: "ai",
-      year: 2024,
-      date: "June 2024",
-      abstract: "This paper explores cutting-edge machine learning algorithms and their applications in modern computing.",
-      citations: 45
-    },
-    {
-      id: 2,
-      title: "Cloud Computing Infrastructure",
-      authors: "Dr. Williams, Dr. Brown",
-      category: "cloud",
-      year: 2024,
-      date: "May 2024",
-      abstract: "A comprehensive study on scalable cloud computing architectures and best practices.",
-      citations: 32
-    },
-    {
-      id: 3,
-      title: "Cybersecurity in IoT Devices",
-      authors: "Prof. Davis, Dr. Miller",
-      category: "security",
-      year: 2023,
-      date: "December 2023",
-      abstract: "Investigating security vulnerabilities and protection mechanisms for Internet of Things systems.",
-      citations: 28
-    },
-    {
-      id: 4,
-      title: "Quantum Computing Fundamentals",
-      authors: "Dr. Anderson",
-      category: "quantum",
-      year: 2023,
-      date: "October 2023",
-      abstract: "An introduction to quantum computing principles and their computational advantages.",
-      citations: 52
-    },
-    {
-      id: 5,
-      title: "Blockchain Technology Applications",
-      authors: "Dr. Taylor, Prof. White",
-      category: "blockchain",
-      year: 2023,
-      date: "August 2023",
-      abstract: "Exploring practical applications of blockchain beyond cryptocurrency.",
-      citations: 38
-    },
-    {
-      id: 6,
-      title: "Data Science and Analytics",
-      authors: "Dr. Harris",
-      category: "data",
-      year: 2023,
-      date: "July 2023",
-      abstract: "Modern approaches to data analysis and extracting insights from big data.",
-      citations: 41
+  // Fetch papers from backend
+  const fetchPapers = useCallback(async () => {
+    try {
+      const query = new URLSearchParams();
+      query.append("status", "approved");
+      if (searchQuery) query.append("search", searchQuery);
+      if (sortBy) query.append("sort", sortBy);
+      if (selectedCategory !== "all") query.append("category", selectedCategory);
+
+      const res = await fetch(`${API_URL}/api/research?${query.toString()}`);
+      const data = await res.json();
+      const papersList = Array.isArray(data) ? data : (data?.data || []);
+      setPapers(papersList);
+    } catch (err) {
+      console.error("Error fetching papers:", err);
     }
-  ];
+  }, [searchQuery, sortBy, selectedCategory]);
 
-  // Filter papers based on category and search
-  let filteredPapers = papers.filter(paper => {
-    const matchCategory = selectedCategory === "all" || paper.category === selectedCategory;
-    const matchSearch = paper.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        paper.authors.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCategory && matchSearch;
-  });
+  useEffect(() => {
+    fetchPapers();
+  }, [fetchPapers]);
 
-  // Sort papers
-  if (sortBy === "recent") {
-    filteredPapers.sort((a, b) => new Date(b.date) - new Date(a.date));
-  } else if (sortBy === "citations") {
-    filteredPapers.sort((a, b) => b.citations - a.citations);
-  } else if (sortBy === "title") {
-    filteredPapers.sort((a, b) => a.title.localeCompare(b.title));
-  }
-
-  const categories = [
-    { id: "all", label: "All Papers", count: papers.length },
-    { id: "ai", label: "Artificial Intelligence", count: papers.filter(p => p.category === "ai").length },
-    { id: "cloud", label: "Cloud Computing", count: papers.filter(p => p.category === "cloud").length },
-    { id: "security", label: "Cybersecurity", count: papers.filter(p => p.category === "security").length },
-    { id: "quantum", label: "Quantum Computing", count: papers.filter(p => p.category === "quantum").length },
-    { id: "blockchain", label: "Blockchain", count: papers.filter(p => p.category === "blockchain").length },
-    { id: "data", label: "Data Science", count: papers.filter(p => p.category === "data").length }
-  ];
+  const categories = useMemo(() => {
+    const cats = ["all", ...new Set(papers.map(p => p.category || "Uncategorized"))];
+    return cats.map(cat => ({
+      id: cat,
+      label: cat === "all" ? "All Papers" : cat.charAt(0).toUpperCase() + cat.slice(1),
+      count: papers.filter(p => (cat === "all" ? true : p.category === cat)).length
+    }));
+  }, [papers]);
 
   return (
     <Layout>
@@ -111,33 +53,31 @@ const Archive = ({user, setUser}) => {
         </ArchiveHeader>
 
         <ArchiveContainer>
-          {/* Search and Filter Section */}
           <SearchFilterSection>
             <SearchBox>
               <input
                 type="text"
                 placeholder="Search papers by title or author..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
               />
-              <button>🔍</button>
+              <button onClick={fetchPapers}>🔍</button>
             </SearchBox>
 
             <Controls>
-              <SortDropdown value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <SortDropdown value={sortBy} onChange={e => setSortBy(e.target.value)}>
                 <option value="recent">Sort by: Most Recent</option>
                 <option value="citations">Sort by: Citations</option>
                 <option value="title">Sort by: Title A-Z</option>
               </SortDropdown>
 
               <ResultCount>
-                {filteredPapers.length} paper{filteredPapers.length !== 1 ? "s" : ""} found
+                {papers.length} paper{papers.length !== 1 ? "s" : ""} found
               </ResultCount>
             </Controls>
           </SearchFilterSection>
 
           <ContentWrapper>
-            {/* Sidebar Categories */}
             <Sidebar>
               <CategoryTitle>Categories</CategoryTitle>
               <CategoryList>
@@ -154,27 +94,20 @@ const Archive = ({user, setUser}) => {
               </CategoryList>
             </Sidebar>
 
-            {/* Papers List */}
             <PapersSection>
-              {filteredPapers.length > 0 ? (
+              {papers.length > 0 ? (
                 <PapersList>
-                  {filteredPapers.map(paper => (
+                  {papers.map(paper => (
                     <PaperCard key={paper.id}>
                       <PaperHeader>
                         <h3>{paper.title}</h3>
-                        <Badge>{paper.year}</Badge>
+                        <Badge>{new Date(paper.created_at).getFullYear()}</Badge>
                       </PaperHeader>
 
                       <PaperMeta>
-                        <MetaItem>
-                          <strong>Authors:</strong> {paper.authors}
-                        </MetaItem>
-                        <MetaItem>
-                          <strong>Published:</strong> {paper.date}
-                        </MetaItem>
-                        <MetaItem>
-                          <strong>Citations:</strong> {paper.citations}
-                        </MetaItem>
+                        <MetaItem><strong>Authors:</strong> {paper.authors}</MetaItem>
+                        <MetaItem><strong>Published:</strong> {new Date(paper.created_at).toLocaleDateString()}</MetaItem>
+                        <MetaItem><strong>Citations:</strong> {paper.citation_count ?? 0}</MetaItem>
                       </PaperMeta>
 
                       <PaperAbstract>

@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000";
+export const API_URL = "http://localhost:5000";
 
 export const signupUser = async (payload) => {
   console.log("Signup data being sent:", payload); // Debug log

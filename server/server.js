@@ -4,12 +4,18 @@ import cors from "cors";
 import dotenv from "dotenv";
 import Database from "better-sqlite3";
 import crypto from "crypto";
+import "./db.js";
+
+import researchRoutes from "./API/Research.js";
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use("/uploads", express.static("uploads"));
+app.use("/api/research", researchRoutes);
 
 // Initialize SQLite database
 const db = new Database("users.db");
