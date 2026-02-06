@@ -8,6 +8,7 @@ import SignUpCard from "./Component/SignUp.jsx";
 import Archive from "./Component/Archive.jsx";
 import Submit from "./Component/Submit.jsx";
 import ProtectedRoute from "./Component/Common/ProctectedRoute.jsx";
+import MyPaper from "./Component/My-Paper.jsx";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -39,7 +40,8 @@ const App = () => {
           <Route path="/" element={<Home user={user} setUser={setUser} />} />
           <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
           <Route path="/archive" element={<Archive user={user} setUser={setUser} />} />
-          <Route path="/submit-paper" element={<Submit user={user} setUser={setUser} />} />
+          <Route path="/submit-paper" element={<Submit user={user} setUser={setUser} />} /> 
+          <Route path="/my-papers" element={<MyPaper user={user} setUser={setUser} />} />
         </Route>
 
         {/* Default route: always go to login if user is not logged in */}
