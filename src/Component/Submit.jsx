@@ -6,7 +6,6 @@ import SideNav from "./SideNav";
 
 import {
   Main,
-  SubmitContainer,
   HeaderSection,
   FormWrapper,
   FormGroup,
@@ -102,10 +101,11 @@ const Submit = ({ user, setUser }) => {
   return (
     <Layout>
       <SideNav user={user} onLogout={() => setUser?.(null)} />
-      <Main>
-        <SubmitContainer>
+        <Main>
           <HeaderSection>
-            <h1>Submit Your Research Paper</h1>
+            <h1 style={{ fontSize: "35px", fontWeight: "800", margin: "0", color: "white" }}>
+              Submit Your Research Paper
+            </h1>
             <p>Contribute to our growing collection of academic research</p>
           </HeaderSection>
 
@@ -206,8 +206,7 @@ const Submit = ({ user, setUser }) => {
               {message && <p style={{ marginTop: "1rem" }}>{message}</p>}
             </form>
           </FormWrapper>
-        </SubmitContainer>
-      </Main>
+          </Main>
     </Layout>
   );
 };

@@ -9,23 +9,23 @@ import {
 import { API_URL } from "../../server/API/Auth.js";
 import Layout from "./Common/layout";
 import SideNav from "./SideNav";
+import SearchResultsModal from "./Modals/SearchResultModal.jsx";
 
 const Home = ({ user, setUser }) => {
   const [papers, setPapers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
-  // Fetch papers from backend
-  const fetchPapers = (search = "") => {
-    const query = new URLSearchParams();
-    query.append("status", "approved");
-    if (search) query.append("search", search);
-    const url = `${API_URL}/api/research?${query.toString()}`;
-
-    fetch(url)
+  // Fetch all papers
+  const fetchPapers = () => {
+    fetch(`${API_URL}/api/research?status=approved`)
       .then(res => res.json())
       .then(data => {
-        const papersList = Array.isArray(data) ? data : (data?.data || []);
-        setPapers(papersList);
+        const papersList = Array.isArray(data) ? data : data?.data || [];
+
+        // Sort by most recent and take top 10 for latest publication
+        setPapers(papersList.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 10));
       })
       .catch(err => {
         console.error("Error fetching papers:", err);
@@ -38,7 +38,19 @@ const Home = ({ user, setUser }) => {
   }, []);
 
   const handleSearch = () => {
-    fetchPapers(searchQuery);
+    if (!searchQuery.trim()) return;
+    fetch(`${API_URL}/api/research?status=approved&search=${searchQuery}`)
+      .then(res => res.json())
+      .then(data => {
+        const results = Array.isArray(data) ? data : data?.data || [];
+        setSearchResults(results);
+        setShowModal(true);
+      })
+      .catch(err => {
+        console.error("Error searching papers:", err);
+        setSearchResults([]);
+        setShowModal(true);
+      });
   };
 
   return (
@@ -81,6 +93,14 @@ const Home = ({ user, setUser }) => {
               <h3>{paper.title}</h3>
               <p>Author: {paper.authors}</p>
               <p>Published: {new Date(paper.created_at).toLocaleDateString()}</p>
+              <span>
+                <strong style={{ color: "#7dd3fc" }}>
+                 ABSTRACT
+                </strong><br/>
+                <h4>
+                  {paper.abstract.length > 200 ? paper.abstract.substring(0, 200) + "..." : paper.abstract}
+                </h4>
+              </span>
               <a href={`${API_URL}/${paper.pdf_path}`} target="_blank" rel="noopener noreferrer">
                 Read More
               </a>
@@ -90,9 +110,17 @@ const Home = ({ user, setUser }) => {
                 link.download = paper.title + ".pdf";
                 link.click();
               }}>Download</button>
-            </div>
+              </div>
           ))}
         </PublishedPapers>
+
+        {showModal && (
+          <SearchResultsModal
+           show={showModal}
+           onClose={() => setShowModal(false)}
+           searchQuery={searchQuery}
+           results={searchResults}
+          />)}
 
         <footer
           style={{
@@ -100,10 +128,10 @@ const Home = ({ user, setUser }) => {
             textAlign: "center",
             marginTop: "50px",
             padding: "20px",
-            borderTop: "1px solid #444",
+            
           }}
         >
-          <p>&copy; 2026 FCIT Journal Platform. All rights reserved.</p>
+          <p>&copy; 2026 FACIT Journal Platform. All rights reserved.</p>
         </footer>
       </Main>
     </Layout>

@@ -2,20 +2,30 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
   Main,
   Header,
-  Content,
-  Message,
-  CardGrid,
-  PaperCard,
-  CardHeader,
+  Message, 
+} from "../Style/MyPaperStyle.jsx";
+
+import{
+  Sidebar,
   Badge,
-  Meta,
-  Abstract,
-  Actions,
-  CategorySection,
   CategoryTitle,
   CategoryList,
-  CategoryItem
-} from "../Style/MyPaperStyle.jsx";
+  CategoryItem,
+  ContentWrapper,
+  PapersSection,
+  PaperCard,
+  PaperHeader,
+  PaperActions,
+  ActionButton,
+  PaperMeta,
+  MetaItem,
+  PaperAbstract,
+  PapersList,
+  ViewMoreContainer,
+  ViewMoreButton,
+  NoResults
+
+}from "../Style/ArchiveStyle.jsx";
 
 import Layout from "./Common/layout";
 import SideNav from "./SideNav";
@@ -25,6 +35,8 @@ const MyPaper = ({ user, setUser }) => {
   const [allPapers, setAllPapers] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const papersPerPage = 2;
 
   // Fetch all approved papers
   const fetchPapers = useCallback(async () => {
@@ -75,18 +87,26 @@ const MyPaper = ({ user, setUser }) => {
     return allPapers.filter(p => (p.category || "Uncategorized") === selectedCategory);
   }, [allPapers, selectedCategory]);
 
+  const startIndex = currentPage * papersPerPage;
+  const visiblePapers = filteredPapers.slice(
+    startIndex,
+    startIndex + papersPerPage
+  );
+
   return (
     <Layout>
       <SideNav user={user} onLogout={() => setUser?.(null)} />
       <Main>
         <Header>
-          <h1>My Papers</h1>
-          <p>Papers submitted with your email address.</p>
+          <h1  style={{ fontSize: "35px", fontWeight: "800", margin: "0", color: "white" }}>
+            My Papers
+          </h1>
+          <p>My Personal Research Work & Project</p>
         </Header>
 
-        <Content>
+        <ContentWrapper>
           {/* Category Filter */}
-          <CategorySection>
+          <Sidebar>
             <CategoryTitle>Filter by Category</CategoryTitle>
             <CategoryList>
               {categories.map(cat => (
@@ -100,48 +120,40 @@ const MyPaper = ({ user, setUser }) => {
                 </CategoryItem>
               ))}
             </CategoryList>
-          </CategorySection>
+          </Sidebar>
 
-          {loading && <Message>Loading papers...</Message>}
-          {!loading && filteredPapers.length === 0 && (
-            <Message>No papers found for {user?.email || "this user"}.</Message>
-          )}
-
-          <CardGrid>
-            {filteredPapers.map(paper => (
+          <PapersSection>
+            {filteredPapers.length ? (
+              <PapersList>
+                {visiblePapers.map(paper => (
               <PaperCard key={paper.id}>
-                <CardHeader>
+                <PaperHeader>
                   <h3>{paper.title}</h3>
                   <Badge>{new Date(paper.created_at).getFullYear()}</Badge>
-                </CardHeader>
-                <Meta>
-                  <div>
-                    <strong>Authors</strong>
-                    <span>{paper.authors}</span>
-                  </div>
-                  <div>
-                    <strong>Category</strong>
-                    <span>{paper.category || "Uncategorized"}</span>
-                  </div>
-                  <div>
-                    <strong>Published</strong>
-                    <span>{new Date(paper.created_at).toLocaleDateString()}</span>
-                  </div>
-                </Meta>
-                <Abstract>
-                  <strong>Abstract</strong>
+                </PaperHeader>
+                
+               <PaperMeta>
+                 <MetaItem><strong>Authors:</strong> {paper.authors}</MetaItem>
+                 <MetaItem><strong>Category:</strong> {paper.category || "Uncategorized"}</MetaItem>
+                 <MetaItem><strong>Published:</strong> {new Date(paper.created_at).toLocaleDateString()}</MetaItem>
+                 <MetaItem><strong>Citations:</strong> {paper.citation_count ?? 0}</MetaItem>
+                </PaperMeta>
+
+                <PaperAbstract>
+                  <h4>Abstract</h4>
                   <p>{paper.abstract}</p>
-                </Abstract>
+                </PaperAbstract>
+
                 {paper.pdf_path && (
-                  <Actions>
-                    <a
+                  <PaperActions>
+                    <ActionButton
                       href={`${API_URL}/${paper.pdf_path}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       View PDF
-                    </a>
-                    <button
+                    </ActionButton>
+                    <ActionButton
                       onClick={() => {
                         const link = document.createElement("a");
                         link.href = `${API_URL}/${paper.pdf_path}`;
@@ -150,13 +162,32 @@ const MyPaper = ({ user, setUser }) => {
                       }}
                     >
                       Download
-                    </button>
-                  </Actions>
+                    </ActionButton>
+                  </PaperActions>
                 )}
               </PaperCard>
             ))}
-          </CardGrid>
-        </Content>
+              </PapersList>
+            ) : ( 
+              !loading && (
+              <NoResults>No papers found for {user?.email || "this user"}.</NoResults>
+              )
+            )}
+            <ViewMoreContainer>
+              {currentPage > 0 && (
+               <ViewMoreButton onClick={() => setCurrentPage(p => p - 1)}>
+                  View Previous
+                </ViewMoreButton>
+              )}
+            
+              {startIndex + papersPerPage < filteredPapers.length && (
+                  <ViewMoreButton onClick={() => setCurrentPage(p => p + 1)}>
+                    View More
+                  </ViewMoreButton>
+                )}
+            </ViewMoreContainer>
+          </PapersSection>
+        </ContentWrapper>
       </Main>
     </Layout>
   );
