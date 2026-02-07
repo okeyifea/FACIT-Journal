@@ -4,6 +4,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import Database from "better-sqlite3";
 import crypto from "crypto";
+import path from "path";
+import { fileURLToPath } from "url";
 import "./db.js";
 
 import researchRoutes from "./API/Research.js";
@@ -14,11 +16,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/uploads", express.static("uploads"));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadsPath = path.resolve(__dirname, "..", "uploads");
+app.use("/uploads", express.static(uploadsPath));
 app.use("/api/research", researchRoutes);
 
 // Initialize SQLite database
-const db = new Database("users.db");
+const usersDbPath = path.resolve(__dirname, "..", "users.db");
+const db = new Database(usersDbPath);
 
 // Create users table if it doesn't exist
 db.exec(`

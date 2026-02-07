@@ -1,6 +1,10 @@
 import Database from "better-sqlite3";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const db = new Database("research.db");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const dbPath = path.resolve(__dirname, "..", "research.db");
+const db = new Database(dbPath);
 
 // Enable foreign keys
 db.pragma("foreign_keys = ON");
