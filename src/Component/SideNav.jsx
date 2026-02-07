@@ -26,7 +26,6 @@ import ApprovalIcon from "../Component/Common/Icons/Approval Icon.svg";
 const SideNav = ({ user, onLogout }) => {
   const nav = useNavigate();
 
-  console.log("User in SideNav:", user);
   return (
     <Container>
       <TopSection>
