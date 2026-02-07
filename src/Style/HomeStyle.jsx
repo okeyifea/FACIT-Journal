@@ -1,20 +1,14 @@
 import styled from "styled-components";
 
-export const Main = styled.main`
-  flex: 1;
-  width: 100%;
-  padding: 0 30px;
-`;
+export const Main = styled.main``;
 
 export const HomeText = styled.div`
+ width:100%;
  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width:100%;
-  margin-top: 10px;
-  margin-left: auto;
-  margin-right: 50px;
+  margin: 30px;
   border-radius: 40px;
   padding: 40px 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -47,16 +41,17 @@ export const SearchBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
+  gap: 0px;
   margin-top: 100px;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 50px;
 
   .search_bar {
+   height: 60px;
     display: flex;
     justify-content: center;
-    gap: 0;
+    gap: 12px;
     align-items: center;
     background: white;
     border-radius: 50px;
@@ -75,13 +70,13 @@ export const SearchBar = styled.div`
     }
 
     input {
-      border: none;
       background: transparent;
       outline: none;
-      font-size: 14px;
+      border: none;
+      font-size: 16px;
       color: #333;
       padding: 8px 12px;
-      width: 250px;
+      width: 400px;
 
       &::placeholder {
         color: #ccc;
@@ -112,7 +107,7 @@ export const SearchBar = styled.div`
 
 export const LatestPublicationHeader = styled.div`
   text-align: center;
-  margin-top: 60px;
+  margin-top: 120px;
   margin-bottom: 40px;
   padding: 0 20px;
 
@@ -145,19 +140,22 @@ export const PublishedPapers = styled.div`
   align-items: center;
   justify-content: center;
   gap: 30px;
-  flex-direction: row;
+  flex-direction: column;
   margin-top: 40px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 10px;
+  margin-right: 10px;
   width: 100%;
   flex-wrap: wrap;
   padding: 20px;
 
   .article-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     border: none;
     border-radius: 12px;
     padding: 25px;
-    width: 300px;
+    width: 100%;
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
@@ -186,17 +184,24 @@ export const PublishedPapers = styled.div`
       }
     }
 
+    span{
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
     h3 {
+      text-align: center;
       margin: 0 0 12px 0;
-      font-size: 20px;
+      font-size: 36px;
       font-weight: 700;
       color: #fff;
       letter-spacing: 0.3px;
     }
 
     p {
+      text-align: center;
       margin: 8px 0;
-      font-size: 14px;
+      font-size: 16px;
       color: #cbd5e1;
       line-height: 1.5;
 
@@ -221,6 +226,8 @@ export const PublishedPapers = styled.div`
     }
 
     button {
+      width: 150px;
+      height: 50px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;

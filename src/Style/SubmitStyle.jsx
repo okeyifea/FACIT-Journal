@@ -1,51 +1,48 @@
 import styled from "styled-components";
 
-export const Main = styled.main``;
-
-export const SubmitContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 60px 30px;
-
-  @media (max-width: 768px) {
-    padding: 40px 20px;
-  }
+export const Main = styled.main`
 `;
 
 export const HeaderSection = styled.div`
-  text-align: center;
-  margin-bottom: 50px;
+  width: 900px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 30px;
+  margin-bottom: 80px;
+  border-radius: 40px;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
 
-  h1 {
-    font-size: 42px;
-    font-weight: 800;
-    color: white;
-    margin: 0 0 15px 0;
-    letter-spacing: 1px;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>');
+    pointer-events: none;
   }
 
   p {
-    font-size: 16px;
-    color: #cbd5e1;
-    margin: 0;
-    letter-spacing: 0.5px;
-  }
-
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 32px;
-    }
-
-    p {
-      font-size: 14px;
-    }
+    position: relative;
+    z-index: 1;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin: 8px 0;
   }
 `;
 
 export const FormWrapper = styled.div`
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%);
   border: 1px solid rgba(102, 126, 234, 0.2);
-  border-radius: 12px;
+  border-radius: 40px;
   padding: 40px;
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);

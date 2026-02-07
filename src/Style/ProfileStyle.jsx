@@ -127,7 +127,7 @@ export const SuccessMessage = styled.div`
 `;
 
 export const ProfileSection = styled.div`
-  margin-bottom: 30px;
+  margin: 30px 0 40px 0;
 `;
 
 export const SectionTitle = styled.h3`
@@ -261,7 +261,7 @@ export const EditButton = styled.button`
 `;
 
 export const LogoutButton = styled(EditButton)`
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 
   &:hover {

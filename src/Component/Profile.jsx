@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import styled from "styled-components";
-//import Header from "./Header";
 
 import {
   Main,
@@ -39,20 +37,35 @@ import {
 
 import Layout from "./Common/layout";
 import SideNav from "./SideNav";
+import { API_URL } from "../../server/API/Auth.js";
 
 const Profile = ({ user, setUser }) => {
   const navigate = useNavigate();
+
   const [isEditing, setIsEditing] = useState(false);
-  const [isUploadingPicture, setIsUploadingPicture] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errors, setErrors] = useState({});
+  const [passwordError, setPasswordError] = useState("");
+
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
     email: user?.email || "",
-    phone: user?.phone || "",
-    registrationNumber: user?.registrationNumber || "",
-    position: user?.position || "",
+    phone: user?.phone || ""
   });
-  const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  });
+
+  /* -------------------- HELPERS -------------------- */
+
+  const showSuccess = (msg) => {
+    setSuccessMessage(msg);
+    setTimeout(() => setSuccessMessage(""), 3000);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -60,94 +73,126 @@ const Profile = ({ user, setUser }) => {
     navigate("/login");
   };
 
-  const handleInputChange = (e) => {
+  /* -------------------- PROFILE -------------------- */
+
+  const handleProfileChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
-
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    if (formData.phone && !/^\d{7,11}$/.test(formData.phone)) {
-      newErrors.phone = "Phone must be 7-11 digits";
-    }
-
-    return newErrors;
+  const validateProfile = () => {
+    const err = {};
+    if (!formData.fullName.trim()) err.fullName = "Full name is required";
+    if (!formData.email.trim()) err.email = "Email is required";
+    return err;
   };
 
-  const handleSaveProfile = async (e) => {
+  const handleSaveProfile = (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    const err = validateProfile();
+    if (Object.keys(err).length) {
+      setErrors(err);
       return;
     }
 
-    // Simulate API call to update profile
     const updatedUser = { ...user, ...formData };
     localStorage.setItem("user", JSON.stringify(updatedUser));
     setUser(updatedUser);
-    setSuccessMessage("Profile updated successfully!");
-    setIsEditing(false);
 
-    setTimeout(() => setSuccessMessage(""), 3000);
+    setIsEditing(false);
+    showSuccess("Profile updated successfully");
   };
 
-  const handlePictureUpload = async (e) => {
+  /* -------------------- PASSWORD -------------------- */
+
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData(prev => ({ ...prev, [name]: value }));
+    setPasswordError("");
+  };
+
+  const handleUpdatePassword = async () => {
+    const { currentPassword, newPassword, confirmPassword } = passwordData;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordError("All fields are required");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+
+    try {
+      const token = JSON.parse(localStorage.getItem("user"))?.token;
+
+      const res = await fetch(`${API_URL}/api/auth/update-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      console.log("Token from localStorage:", token);
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      });
+
+      setShowPasswordForm(false);
+      showSuccess("Password updated successfully");
+    } catch (err) {
+      setPasswordError(err.message || "Failed to update password");
+    }
+  };
+
+  /* -------------------- PICTURE -------------------- */
+
+  const handlePictureUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setIsUploadingPicture(true);
-
-    // Convert to base64 for demo (in production, upload to server/cloud storage)
     const reader = new FileReader();
     reader.onload = () => {
       const updatedUser = { ...user, profilePicture: reader.result };
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUser(updatedUser);
-      setSuccessMessage("Profile picture updated successfully!");
-      setIsUploadingPicture(false);
-
-      setTimeout(() => setSuccessMessage(""), 3000);
+      showSuccess("Profile picture updated");
     };
     reader.readAsDataURL(file);
   };
 
+  /* -------------------- UI -------------------- */
+
   return (
     <Layout>
       <SideNav user={user} onLogout={handleLogout} />
+
       <Main>
         <ProfileContainer>
           <ProfileContent>
-            {/* Profile Card */}
             <ProfileCard>
               <ProfileHeader>
                 <PictureUploadContainer>
                   <ProfilePictureWrapper>
                     <ProfilePicture
                       src={user?.profilePicture || "https://via.placeholder.com/150"}
-                      alt="Profile"
                     />
-                    <UploadLabel htmlFor="picture-upload">
-                      📷
-                    </UploadLabel>
+                    <UploadLabel htmlFor="upload">📷</UploadLabel>
                     <PictureInput
-                      id="picture-upload"
+                      id="upload"
                       type="file"
                       accept="image/*"
                       onChange={handlePictureUpload}
-                      disabled={isUploadingPicture}
                     />
                   </ProfilePictureWrapper>
                 </PictureUploadContainer>
@@ -163,105 +208,89 @@ const Profile = ({ user, setUser }) => {
 
               {!isEditing ? (
                 <>
-                  {/* View Mode */}
                   <ProfileSection>
                     <SectionTitle>Personal Information</SectionTitle>
                     <InfoGrid>
                       <InfoItem>
                         <InfoLabel>Full Name</InfoLabel>
-                        <InfoValue>{user?.fullName || "Not provided"}</InfoValue>
+                        <InfoValue>{user?.fullName}</InfoValue>
                       </InfoItem>
                       <InfoItem>
                         <InfoLabel>Email</InfoLabel>
-                        <InfoValue>{user?.email || "Not provided"}</InfoValue>
+                        <InfoValue>{user?.email}</InfoValue>
                       </InfoItem>
                       <InfoItem>
                         <InfoLabel>Phone</InfoLabel>
-                        <InfoValue>{user?.phone || "Not provided"}</InfoValue>
+                        <InfoValue>{user?.phone || "—"}</InfoValue>
                       </InfoItem>
-                      {user?.registrationNumber && (
-                        <InfoItem>
-                          <InfoLabel>Registration Number</InfoLabel>
-                          <InfoValue>{user.registrationNumber}</InfoValue>
-                        </InfoItem>
-                      )}
                     </InfoGrid>
                   </ProfileSection>
 
                   <ButtonGroup>
-                    <EditButton onClick={() => setIsEditing(true)}>
-                      ✏️ Edit Profile
-                    </EditButton>
-                    <LogoutButton onClick={handleLogout}>
-                      🚪 Logout
+                    <EditButton onClick={() => setIsEditing(true)}>✏️ Edit</EditButton>
+                    <LogoutButton onClick={() => setShowPasswordForm(true)}>
+                      🔒 Update Password
                     </LogoutButton>
                   </ButtonGroup>
                 </>
               ) : (
-                <>
-                  {/* Edit Mode */}
-                  <form onSubmit={handleSaveProfile}>
-                    <ProfileSection>
-                      <SectionTitle>Edit Profile</SectionTitle>
-                      <FormGrid>
-                        <FormGroup>
-                          <Label>Full Name *</Label>
-                          <Input
-                            type="text"
-                            name="fullName"
-                            value={formData.fullName}
-                            onChange={handleInputChange}
-                            hasError={!!errors.fullName}
-                          />
-                          {errors.fullName && <ErrorMsg>{errors.fullName}</ErrorMsg>}
-                        </FormGroup>
+                <form onSubmit={handleSaveProfile}>
+                  <ProfileSection>
+                    <SectionTitle>Edit Profile</SectionTitle>
+                    <FormGrid>
+                      <FormGroup>
+                        <Label>Full Name</Label>
+                        <Input name="fullName" value={formData.fullName} onChange={handleProfileChange} />
+                        {errors.fullName && <ErrorMsg>{errors.fullName}</ErrorMsg>}
+                      </FormGroup>
 
-                        <FormGroup>
-                          <Label>Email *</Label>
-                          <Input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            hasError={!!errors.email}
-                          />
-                          {errors.email && <ErrorMsg>{errors.email}</ErrorMsg>}
-                        </FormGroup>
+                      <FormGroup>
+                        <Label>Email</Label>
+                        <Input name="email" value={formData.email} onChange={handleProfileChange} />
+                        {errors.email && <ErrorMsg>{errors.email}</ErrorMsg>}
+                      </FormGroup>
 
-                        <FormGroup>
-                          <Label>Phone</Label>
-                          <Input
-                            type="tel"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            hasError={!!errors.phone}
-                          />
-                          {errors.phone && <ErrorMsg>{errors.phone}</ErrorMsg>}
-                        </FormGroup>
+                      <FormGroup>
+                        <Label>Phone</Label>
+                        <Input name="phone" value={formData.phone} onChange={handleProfileChange} />
+                      </FormGroup>
+                    </FormGrid>
+                  </ProfileSection>
 
-                        {user?.registrationNumber && (
-                          <FormGroup>
-                            <Label>Registration Number</Label>
-                            <Input
-                              type="text"
-                              name="registrationNumber"
-                              value={formData.registrationNumber}
-                              disabled
-                            />
-                          </FormGroup>
-                        )}
-                      </FormGrid>
-                    </ProfileSection>
+                  <ButtonGroup>
+                    <SaveButton type="submit">✓ Save</SaveButton>
+                    <CancelButton type="button" onClick={() => setIsEditing(false)}>
+                      ✕ Cancel
+                    </CancelButton>
+                  </ButtonGroup>
+                </form>
+              )}
 
-                    <ButtonGroup>
-                      <SaveButton type="submit">✓ Save Changes</SaveButton>
-                      <CancelButton type="button" onClick={() => setIsEditing(false)}>
-                        ✕ Cancel
-                      </CancelButton>
-                    </ButtonGroup>
-                  </form>
-                </>
+              {showPasswordForm && (
+                <ProfileSection>
+                  <SectionTitle>Update Password</SectionTitle>
+                  <FormGrid>
+                    <FormGroup>
+                      <Label>Current Password</Label>
+                      <Input type="password" name="currentPassword" onChange={handlePasswordChange} />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label>New Password</Label>
+                      <Input type="password" name="newPassword" onChange={handlePasswordChange} />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label>Confirm Password</Label>
+                      <Input type="password" name="confirmPassword" onChange={handlePasswordChange} />
+                    </FormGroup>
+                  </FormGrid>
+
+                  {passwordError && <ErrorMsg>{passwordError}</ErrorMsg>}
+
+                  <ButtonGroup>
+                    <SaveButton onClick={handleUpdatePassword}>✓ Update</SaveButton>
+                    <CancelButton onClick={() => setShowPasswordForm(false)}>✕ Cancel</CancelButton>
+                  </ButtonGroup>
+                </ProfileSection>
               )}
             </ProfileCard>
           </ProfileContent>

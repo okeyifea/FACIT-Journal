@@ -11,22 +11,32 @@ const LoginCard = ({ setUser }) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    const data = await loginUser({ username, password });
+    try {
+      const data = await loginUser({ username, password });
 
-    if (data.success) {
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setUser?.(data.user);  // Update app-level user state (safe)
-      navigate("/");
-    } else {
-      setError(data.message);
+      if (data.success) {
+        // If your backend doesn't return a token yet, we just store user info
+        const userWithToken = {
+          ...data.user,
+          token: data.token || "demo-token" // temporary token for testing
+        };
+        localStorage.setItem("user", JSON.stringify(userWithToken));
+        setUser?.(userWithToken); 
+        navigate("/");
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Network error. Try again.");
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const handleForgotPassword = (e) => {
@@ -46,7 +56,7 @@ const LoginCard = ({ setUser }) => {
           <h2>LOGIN</h2>
           <p>Welcome back to FACIT Journal Platform</p>
         </div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <div className="form-body">
             <label htmlFor="username">Username</label>
             <input
@@ -80,12 +90,12 @@ const LoginCard = ({ setUser }) => {
           </button>
 
           <span> 
-            <a href="" onClick={handleForgotPassword}>
+            <a href="#" onClick={handleForgotPassword}>
               Forgot your password?
             </a> 
           </span>
           <span> 
-            Don't have an account? <a href="" onClick={handleSignUp}>Create</a>
+            Don't have an account? <a href="#" onClick={handleSignUp}>Create</a>
           </span>
         </form>
       </LoginContainer>

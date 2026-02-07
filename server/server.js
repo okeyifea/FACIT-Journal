@@ -6,9 +6,11 @@ import Database from "better-sqlite3";
 import crypto from "crypto";
 import path from "path";
 import { fileURLToPath } from "url";
+import jwt from "jsonwebtoken";
 import "./db.js";
 
 import researchRoutes from "./API/Research.js";
+import authRoutes from "./API/Pass.js";
 
 dotenv.config();
 
@@ -16,10 +18,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadsPath = path.resolve(__dirname, "..", "uploads");
 app.use("/uploads", express.static(uploadsPath));
 app.use("/api/research", researchRoutes);
+app.use("/api/auth", authRoutes);
 
 // Initialize SQLite database
 const usersDbPath = path.resolve(__dirname, "..", "users.db");
@@ -113,54 +117,41 @@ seedUsers();
 
 // Login route
 app.post("/login", (req, res) => {
-  console.log("Login request received:", req.body);
-
   const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "Username and password required",
-    });
-  }
+  if (!username || !password) return res.status(400).json({ success: false, message: "Username and password required" });
 
   try {
     const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
-    }
+    if (!user) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
     const passwordHash = hashPassword(password);
-    if (user.password_hash !== passwordHash) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
-    }
+    if (user.password_hash !== passwordHash)
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user.id, username: user.username, role: user.role },
+      process.env.JWT_SECRET || "your-secret-key",
+      { expiresIn: "1d" }
+    );
 
     return res.json({
       success: true,
       user: {
         id: user.id,
         username: user.username,
-        role: user.role,
         fullName: user.fullName,
         email: user.email,
+        role: user.role,
         phone: user.phone,
         registrationNumber: user.registrationNumber,
-        position: user.position,
+        position: user.position
       },
+      token
     });
   } catch (error) {
     console.error("Login error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
 

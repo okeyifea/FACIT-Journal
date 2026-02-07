@@ -31,7 +31,6 @@ const Root = styled.div`
 const Main = styled.main`
   flex: 1;
   margin-left: 270px;
-  padding-top: 50px;
   min-height: 100vh;
   width: calc(100% - 270px);
   left: 0;
