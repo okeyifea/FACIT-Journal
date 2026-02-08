@@ -2,26 +2,43 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import { API_URL } from "../../server/API/Auth";
+
 const ForgottenPassword = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [email, setEmail] = useState("");
 
-  const handleReset = (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulate API call
+
+  const handleReset = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+
+  try {
+    const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+
+    if (!res.ok) {
+      throw new Error("Request failed");
+    }
+
+    setSubmitted(true);
+
     setTimeout(() => {
-      setIsLoading(false);
-      setSubmitted(true);
-      
-      // Redirect after 3 seconds
-      setTimeout(() => {
-        navigate("/");
-      }, 3000);
-    }, 1000);
-  };
+      navigate("/login");
+    }, 3000);
+
+  } catch (err) {
+    console.error(err);
+    alert("Unable to send reset link");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <ForgottenPasswordWrapper>
@@ -41,6 +58,8 @@ const ForgottenPassword = () => {
                   placeholder="Enter your registered email"
                   required
                   disabled={isLoading}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </FormGroup>
 
@@ -74,7 +93,6 @@ const ForgottenPasswordWrapper = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f1724 0%, #1a1f2e 100%);
   padding: 20px;
 `;
 

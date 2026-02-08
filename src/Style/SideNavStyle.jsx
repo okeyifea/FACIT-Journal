@@ -15,6 +15,23 @@ export const Container = styled.aside`
   left: 0;
   top: 0;
     z-index: 100;
+
+  @media (max-width: 900px) {
+    width: 220px;
+    min-width: 200px;
+  }
+
+  @media (max-width: 640px) {
+    position: fixed;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-right: none;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 10px 12px;
+  }
 `;
 
 export const TopSection = styled.div`
@@ -22,6 +39,16 @@ export const TopSection = styled.div`
   flex-direction: column;
   overflow-y: auto;
   padding-right: 4px;
+
+  @media (max-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding-right: 0;
+    overflow-y: visible;
+    overflow-x: auto;
+    flex: 1;
+  }
 `;
 
 // Brand
@@ -34,6 +61,11 @@ export const Brand = styled.div`
   padding: 6px;
   border-radius: 6px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  @media (max-width: 640px) {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
 `;
 
 export const Logo = styled.div`font-size:24px;`;
@@ -59,6 +91,19 @@ export const User = styled.div`
     border:2px solid rgba(0,0,0,0.1);
     margin-bottom: 6px;
   }
+
+  @media (max-width: 900px) {
+    min-height: 170px;
+
+    .avatar {
+      width: 84px;
+      height: 84px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    display: none;
+  }
 `;
 
 export const UserInfo = styled.div`
@@ -67,7 +112,8 @@ flex-direction:column;
 justify-content:center;
 text-align:center;
 gap:4px;
-margin-top: 10px;`;
+margin-top: 10px;
+`;
 
 export const Name = styled.div`
 text-align:center;
@@ -76,7 +122,7 @@ line-height:1.2;`;
 export const Role = styled.div`
 color:#555;
 margin-top:2px;
-ext-transform:capitalize;
+text-transform:capitalize;
 text-align:center;`;
 
 // Navigation
@@ -84,6 +130,15 @@ export const NavList = styled.nav`
   display:flex;
   flex-direction:column;
   gap:10px;
+
+  @media (max-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 0 6px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
 `;
 
 export const NavItem = styled.button`
@@ -112,17 +167,36 @@ export const NavItem = styled.button`
   &:focus {
     outline: none;
   }
+
+  @media (max-width: 640px) {
+    height: 36px;
+    width: auto;
+    padding: 6px 10px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
 `;
 
 export const Icon = styled.img`
   width: 20px;
   height: 20px;
+
+  @media (max-width: 640px) {
+    width: 18px;
+    height: 18px;
+  }
 `;
 
 // Footer
 export const Footer = styled.div`
   padding-top:8px;
   border-top:1px solid rgba(0,0,0,0.05);
+
+  @media (max-width: 640px) {
+    padding-top: 0;
+    border-top: none;
+    flex-shrink: 0;
+  }
 `;
 
 export const LoginButton = styled.button`
@@ -136,6 +210,15 @@ export const LoginButton = styled.button`
   color:white;
   font-weight:700;
   cursor:pointer;
+
+  @media (max-width: 640px) {
+    width: auto;
+    height: 36px;
+    margin-bottom: 0;
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
 `;
 
 export const LogoutButton = styled.button`
@@ -148,4 +231,13 @@ export const LogoutButton = styled.button`
   cursor:pointer;
   background: red;
   color: white;
+
+  @media (max-width: 640px) {
+    width: auto;
+    height: 36px;
+    margin-bottom: 0;
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
 `;

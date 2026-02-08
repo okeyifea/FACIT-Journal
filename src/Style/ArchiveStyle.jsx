@@ -9,7 +9,7 @@ export const ArchiveHeader = styled.div`
   padding: 60px 30px;
   text-align: center;
   box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
-  margin-top: 50px;
+  margin: 30px;
   border-radius: 40px;
 
   h1 {
@@ -40,6 +40,7 @@ export const ArchiveHeader = styled.div`
 `;
 
 export const ArchiveContainer = styled.div`
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 40px 30px;
@@ -54,7 +55,7 @@ export const SearchFilterSection = styled.div`
   margin-bottom: 40px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 40px;
 `;
 
 export const SearchBox = styled.div`
@@ -179,7 +180,6 @@ export const Sidebar = styled.div`
   border: 1px solid rgba(102, 126, 234, 0.2);
   backdrop-filter: blur(10px);
   position: sticky;
-  top: 100px;
 
   @media (max-width: 768px) {
     position: static;
@@ -188,8 +188,9 @@ export const Sidebar = styled.div`
 `;
 
 export const CategoryTitle = styled.h3`
-  color: white;
+  color: black;
   font-size: 18px;
+  text-align: center;
   margin: 0 0 15px 0;
   font-weight: 700;
 `;
@@ -232,7 +233,8 @@ export const CategoryItem = styled.button`
 
 // --- Papers Section ---
 export const PapersSection = styled.div`
-  width: 100%;
+  width: 900px;
+  max-width: 900px;
 `;
 
 export const PapersList = styled.div`
@@ -249,6 +251,7 @@ export const PaperCard = styled.div`
   backdrop-filter: blur(10px);
   transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
   border-left: 4px solid #667eea;
+  overflow: hidden;
 
   &:hover {
     border-left-color: #764ba2;
@@ -343,6 +346,9 @@ export const PaperAbstract = styled.div`
     font-size: 14px;
     line-height: 1.7;
     margin: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 `;
 
@@ -394,5 +400,31 @@ export const NoResults = styled.div`
   small {
     font-size: 14px;
     color: #94a3b8;
+  }
+`;
+
+export const ViewMoreContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  `;
+
+export const ViewMoreButton = styled.button`
+  flex: 1;
+  max-width: 200px;
+  height: 40px;
+  margin: 20px auto 0 auto;
+  padding: 10px 25px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
   }
 `;

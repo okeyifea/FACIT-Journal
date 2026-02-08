@@ -47,13 +47,14 @@ const insertPaper = db.prepare(`
     pdf_path,
     category,
     submitted_by,
+    author_role,
     citation_count,
     status,
     approval_required,
     approval_count,
     created_at
   )
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
 const TOTAL_PAPERS = 30;
@@ -61,6 +62,7 @@ const TOTAL_PAPERS = 30;
 // 1️⃣ Guarantee at least ONE paper per fixed email
 fixedEmails.forEach((email, i) => {
   const category = categories[i % categories.length];
+  const authorRole = email.startsWith("student") ? "student" : email.startsWith("staff") ? "staff" : "officer";
 
   insertPaper.run(
     `Guaranteed Paper by ${email}`,
@@ -69,10 +71,11 @@ fixedEmails.forEach((email, i) => {
     `/uploads/guaranteed-paper-${i + 1}.pdf`,
     category.id,
     email,
+    authorRole,
     Math.floor(Math.random() * 50),
-    "approved",
+    "pending",
     2,
-    2,
+    0,
     new Date().toISOString()
   );
 });
@@ -82,6 +85,14 @@ for (let i = fixedEmails.length; i < TOTAL_PAPERS; i++) {
   const category = categories[i % categories.length];
   const submittedBy =
     submittedByPool[Math.floor(Math.random() * submittedByPool.length)];
+  const authorRole = submittedBy.startsWith("student")
+    ? "student"
+    : submittedBy.startsWith("staff")
+    ? "staff"
+    : submittedBy.startsWith("officer")
+    ? "officer"
+    : "student";
+  const isApproved = Math.random() > 0.4;
 
   insertPaper.run(
     `Sample Research Paper ${i + 1}`,
@@ -90,10 +101,11 @@ for (let i = fixedEmails.length; i < TOTAL_PAPERS; i++) {
     `/uploads/sample-paper-${i + 1}.pdf`,
     category.id,
     submittedBy,
+    authorRole,
     Math.floor(Math.random() * 100),
-    "approved",
+    isApproved ? "approved" : "pending",
     2,
-    2,
+    isApproved ? 2 : 0,
     new Date(
       2020 + (i % 5),
       Math.floor(Math.random() * 12),
