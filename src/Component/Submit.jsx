@@ -3,6 +3,7 @@ import React , {useState}from "react";
 //import Header from "./Header";
 import Layout from "./Common/layout";
 import SideNav from "./SideNav";
+import Modal from "./Common/Modal.jsx";
 
 import {
   Main,
@@ -37,6 +38,7 @@ const Submit = ({ user, setUser }) => {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [modal, setModal] = useState({ open: false, title: "", message: "" });
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -80,6 +82,11 @@ const Submit = ({ user, setUser }) => {
       const result = await res.json();
       setMessage(result.message || "Paper submitted");
       if (res.ok) {
+        setModal({
+          open: true,
+          title: "Submission Successful",
+          message: result.message || "Paper submitted successfully"
+        });
         setFormData({
           title: "",
           authors: "",
@@ -93,6 +100,11 @@ const Submit = ({ user, setUser }) => {
     } catch (err) {
       console.error(err);
       setMessage("Submission failed");
+      setModal({
+        open: true,
+        title: "Submission Failed",
+        message: "Submission failed. Please try again."
+      });
     } finally {
       setLoading(false);
     }
@@ -204,6 +216,12 @@ const Submit = ({ user, setUser }) => {
               </ButtonGroup>
 
               {message && <p style={{ marginTop: "1rem" }}>{message}</p>}
+              <Modal
+                open={modal.open}
+                title={modal.title}
+                message={modal.message}
+                onClose={() => setModal({ open: false, title: "", message: "" })}
+              />
             </form>
           </FormWrapper>
           </Main>

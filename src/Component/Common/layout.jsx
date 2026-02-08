@@ -2,12 +2,17 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import SideNav from "../SideNav";
+import { useToast } from "./Toast.jsx";
 
 const Layout = ({ children, user, setUser }) => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const handleLogout = () => {
+    const name = user?.username || user?.fullName || "User";
+    addToast(`Goodbye, ${name}`);
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser?.(null);
     navigate("/login");
   };
@@ -42,6 +47,6 @@ const Main = styled.main`
 
   @media (max-width: 640px) {
     margin-left: 0;
-    padding: 80px 16px 24px;
+    padding: 96px 16px 24px;
   }
 `;

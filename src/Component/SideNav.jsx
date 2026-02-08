@@ -23,6 +23,8 @@ import ArchiveIcon from "../Component/Common/Icons/Archive Icon.svg";
 import SubmitIcon from "../Component/Common/Icons/Submit Icon.svg";
 import ProfileIcon from "../Component/Common/Icons/User Icon.svg";
 import ApprovalIcon from "../Component/Common/Icons/Approval Icon.svg";
+import DashboardIcon from "./Common/Icons/dashboard.svg"
+
 const SideNav = ({ user, onLogout }) => {
   const nav = useNavigate();
 
@@ -60,6 +62,9 @@ const SideNav = ({ user, onLogout }) => {
           </NavItem>
           <NavItem onClick={() => nav("/submit-paper")}>
             <Icon src={SubmitIcon} alt="Submit" /> Submit Paper
+          </NavItem>
+          <NavItem onClick={() => nav("/dashboard")}>
+            <Icon src={DashboardIcon} alt="dashboard" /> Paper Review
           </NavItem>
           <NavItem onClick={() => nav("/my-papers")}>
             <Icon src={ApprovalIcon} alt="My Papers" /> My Papers

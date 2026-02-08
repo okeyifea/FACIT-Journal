@@ -1,10 +1,4 @@
-import Database from "better-sqlite3";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const usersDbPath = path.resolve(__dirname, "..", "..", "users.db");
-const db = new Database(usersDbPath);
+import db from "../db.js";
 
 export const getUserById = (id) => {
   return db.prepare("SELECT id, password_hash FROM users WHERE id = ?").get(id);

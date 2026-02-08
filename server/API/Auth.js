@@ -5,7 +5,7 @@ export const signupUser = async (payload) => {
   console.log("Signup data being sent:", payload); // Debug log
 
   try {
-    const response = await fetch(`${API_URL}/signup`, {
+    const response = await fetch(`${API_URL}/api/auth/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

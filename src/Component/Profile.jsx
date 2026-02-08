@@ -34,13 +34,16 @@ import {
   SaveButton,
   CancelButton
 } from "../Style/ProfileStyle.jsx";
+import ProfileIcon from "./Common/Icons/profile-user.svg"
 
 import Layout from "./Common/layout";
 import SideNav from "./SideNav";
 import { API_URL } from "../../server/API/Auth.js";
+import { useToast } from "./Common/Toast.jsx";
 
 const Profile = ({ user, setUser }) => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const [isEditing, setIsEditing] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -51,6 +54,7 @@ const Profile = ({ user, setUser }) => {
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
     email: user?.email || "",
+    username: user?.username || "",
     phone: user?.phone || ""
   });
 
@@ -64,6 +68,7 @@ const Profile = ({ user, setUser }) => {
 
   const showSuccess = (msg) => {
     setSuccessMessage(msg);
+    addToast(msg);
     setTimeout(() => setSuccessMessage(""), 3000);
   };
 
@@ -85,6 +90,7 @@ const Profile = ({ user, setUser }) => {
     const err = {};
     if (!formData.fullName.trim()) err.fullName = "Full name is required";
     if (!formData.email.trim()) err.email = "Email is required";
+    if (!formData.username.trim()) err.username = "Username is required"
     return err;
   };
 
@@ -185,7 +191,7 @@ const Profile = ({ user, setUser }) => {
                 <PictureUploadContainer>
                   <ProfilePictureWrapper>
                     <ProfilePicture
-                      src={user?.profilePicture || "https://via.placeholder.com/150"}
+                      src={user?.profilePicture || ProfileIcon}
                     />
                     <UploadLabel htmlFor="upload">📷</UploadLabel>
                     <PictureInput
@@ -220,6 +226,10 @@ const Profile = ({ user, setUser }) => {
                         <InfoValue>{user?.email}</InfoValue>
                       </InfoItem>
                       <InfoItem>
+                        <InfoLabel>Username</InfoLabel>
+                        <InfoValue>{user?.username}</InfoValue>
+                      </InfoItem>
+                      <InfoItem>
                         <InfoLabel>Phone</InfoLabel>
                         <InfoValue>{user?.phone || "—"}</InfoValue>
                       </InfoItem>
@@ -248,6 +258,12 @@ const Profile = ({ user, setUser }) => {
                         <Label>Email</Label>
                         <Input name="email" value={formData.email} onChange={handleProfileChange} />
                         {errors.email && <ErrorMsg>{errors.email}</ErrorMsg>}
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Label>Username</Label>
+                        <Input name="username" value={formData.username} onChange={handleProfileChange} />
+                        {errors.username && <ErrorMsg>{errors.username}</ErrorMsg>}
                       </FormGroup>
 
                       <FormGroup>

@@ -2,10 +2,10 @@ import db from "../db.js";
 
 class ResearchService {
 
-  static create({ title, authors, abstract, category, submittedBy, pdfPath }) {
-    // All submissions are auto-approved
-    const approvalRequired = 0;
-    const status = "approved";
+  static create({ title, authors, abstract, category, submittedBy, pdfPath, role }) {
+    // Submissions require review
+    const approvalRequired = 2;
+    const status = "pending";
 
     // Validate category exists
     const categoryExists = db
@@ -19,8 +19,8 @@ class ResearchService {
     // Insert research paper
     const stmt = db.prepare(`
       INSERT INTO research_papers
-      (title, authors, abstract, pdf_path, category, submitted_by, status, approval_required, approval_count, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, CURRENT_TIMESTAMP)
+      (title, authors, abstract, pdf_path, category, submitted_by, author_role, status, approval_required, approval_count, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, CURRENT_TIMESTAMP)
     `);
 
     const result = stmt.run(
@@ -30,6 +30,7 @@ class ResearchService {
       pdfPath,
       category,
       submittedBy,
+      role,
       status,
       approvalRequired
     );
@@ -92,12 +93,21 @@ class ResearchService {
     `).run(id);
   }
 
-  static getByUserEmail(email) {
-    return db.prepare(`
+  static getByUserEmail(email, status) {
+    let query = `
       SELECT * FROM research_papers
       WHERE submitted_by = ?
-      ORDER BY created_at DESC
-    `).all(email);
+    `;
+    const params = [email];
+
+    if (status) {
+      query += " AND status = ?";
+      params.push(status);
+    }
+
+    query += " ORDER BY created_at DESC";
+
+    return db.prepare(query).all(...params);
   }
 }
 

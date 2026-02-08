@@ -234,6 +234,7 @@ export const CategoryItem = styled.button`
 // --- Papers Section ---
 export const PapersSection = styled.div`
   width: 900px;
+  max-width: 900px;
 `;
 
 export const PapersList = styled.div`
@@ -250,6 +251,7 @@ export const PaperCard = styled.div`
   backdrop-filter: blur(10px);
   transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
   border-left: 4px solid #667eea;
+  overflow: hidden;
 
   &:hover {
     border-left-color: #764ba2;
@@ -344,6 +346,9 @@ export const PaperAbstract = styled.div`
     font-size: 14px;
     line-height: 1.7;
     margin: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 `;
 

@@ -9,6 +9,8 @@ import Archive from "./Component/Archive.jsx";
 import Submit from "./Component/Submit.jsx";
 import ProtectedRoute from "./Component/Common/ProctectedRoute.jsx";
 import MyPaper from "./Component/My-Paper.jsx";
+import PaperReviewDashboard from "./Component/PaperReviewDashboard.jsx"
+import { ToastProvider } from "./Component/Common/Toast.jsx";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -28,26 +30,29 @@ const App = () => {
 
 
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/login" element={<LoginCard setUser={setUser} />} />
-        <Route path="/forgot-password" element={<ForgottenPassword />} />
-        <Route path="/sign-up" element={<SignUpCard />} />
+    <ToastProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<LoginCard setUser={setUser} />} />
+          <Route path="/forgot-password" element={<ForgottenPassword />} />
+          <Route path="/sign-up" element={<SignUpCard />} />
 
-        {/* Protected routes */}
-        <Route element={<ProtectedRoute user={user} isLoading={isLoading} />}>
-          <Route path="/" element={<Home user={user} setUser={setUser} />} />
-          <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
-          <Route path="/archive" element={<Archive user={user} setUser={setUser} />} />
-          <Route path="/submit-paper" element={<Submit user={user} setUser={setUser} />} /> 
-          <Route path="/my-papers" element={<MyPaper user={user} setUser={setUser} />} />
-        </Route>
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute user={user} isLoading={isLoading} />}>
+            <Route path="/" element={<Home user={user} setUser={setUser} />} />
+            <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
+            <Route path="/archive" element={<Archive user={user} setUser={setUser} />} />
+            <Route path="/submit-paper" element={<Submit user={user} setUser={setUser} />} /> 
+            <Route path="/my-papers" element={<MyPaper user={user} setUser={setUser} />} />
+            <Route path="/dashboard" element={<PaperReviewDashboard user={user} setUser={setUser} />} />
+          </Route>
 
-        {/* Default route: always go to login if user is not logged in */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Default route: always go to login if user is not logged in */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   );
 };
 

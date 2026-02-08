@@ -2,15 +2,17 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import Database from "better-sqlite3";
 import crypto from "crypto";
 import path from "path";
 import { fileURLToPath } from "url";
 import jwt from "jsonwebtoken";
-import "./db.js";
+import db from "./db.js";
 
 import researchRoutes from "./API/Research.js";
 import authRoutes from "./API/Pass.js";
+import restRoutes from "./API/restPass.js";
+import dashboardRoutes from "./API/Dashboard.js";
+import reviewRoutes from "./API/Review.js";
 
 dotenv.config();
 
@@ -24,25 +26,9 @@ const uploadsPath = path.resolve(__dirname, "..", "uploads");
 app.use("/uploads", express.static(uploadsPath));
 app.use("/api/research", researchRoutes);
 app.use("/api/auth", authRoutes);
-
-// Initialize SQLite database
-const usersDbPath = path.resolve(__dirname, "..", "users.db");
-const db = new Database(usersDbPath);
-
-// Create users table if it doesn't exist
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE,
-    password_hash TEXT,
-    role TEXT,
-    fullName TEXT,
-    email TEXT,
-    phone TEXT,
-    registrationNumber TEXT,
-    position TEXT
-  )
-`);
+app.use("/api/auth", restRoutes);
+app.use("/api", dashboardRoutes);
+app.use("/api", reviewRoutes);
 
 // Hash function (SHA-256 for demo; use bcrypt in production)
 const hashPassword = (password) => {
@@ -155,8 +141,7 @@ app.post("/login", (req, res) => {
   }
 });
 
-// SIGNUP route
-app.post("/signup", (req, res) => {
+const handleSignup = (req, res) => {
   console.log("Signup request received:", req.body);
 
   const {
@@ -170,23 +155,33 @@ app.post("/signup", (req, res) => {
     position,
   } = req.body;
 
+  const normalizedRole = String(role || "").toLowerCase();
+  const allowedRoles = new Set(["student", "staff", "officer"]);
+
   // Basic required fields
-  if (!username || !password || !role || !fullName || !email) {
+  if (!username || !password || !normalizedRole || !fullName || !email) {
     return res.status(400).json({
       success: false,
       message: "Username, password, role, full name and email are required",
     });
   }
 
+  if (!allowedRoles.has(normalizedRole)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid role. Must be student, staff, or officer",
+    });
+  }
+
   // Role-based validation
-  if (role === "student" && !registrationNumber) {
+  if (normalizedRole === "student" && !registrationNumber) {
     return res.status(400).json({
       success: false,
       message: "Registration number is required for students",
     });
   }
 
-  if (role === "officer" && !position) {
+  if (normalizedRole === "officer" && !position) {
     return res.status(400).json({
       success: false,
       message: "Position is required for officers",
@@ -196,13 +191,13 @@ app.post("/signup", (req, res) => {
   try {
     // Check if username already exists
     const existingUser = db
-      .prepare("SELECT id FROM users WHERE username = ?")
-      .get(username);
+      .prepare("SELECT id FROM users WHERE username = ? OR email = ?")
+      .get(username, email);
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "Username already exists",
+        message: "Username or email already exists",
       });
     }
 
@@ -223,7 +218,7 @@ app.post("/signup", (req, res) => {
     insert.run(
       username,
       hashPassword(password),
-      role,
+      normalizedRole,
       fullName,
       email,
       phone || null,
@@ -245,7 +240,11 @@ app.post("/signup", (req, res) => {
       message: "Internal server error",
     });
   }
-});
+};
+
+// SIGNUP routes (both legacy and API-prefixed)
+app.post("/signup", handleSignup);
+app.post("/api/auth/signup", handleSignup);
 
 // Get all users (for testing)
 app.get("/users", (req, res) => {

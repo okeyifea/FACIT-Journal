@@ -35,6 +35,7 @@ import {
   Spinner,
 } from "../Style/SignUpStyle.jsx"
 import { signupUser } from "../../server/API/Auth.js";
+import Modal from "./Common/Modal.jsx";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ const SignUp = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [modal, setModal] = useState({ open: false, title: "", message: "" });
 
   // Handle input changes
   const handleChange = (e) => {
@@ -131,9 +133,19 @@ const SignUp = () => {
     console.log("sent payload:", payload);
     const data = await signupUser(payload);
     if (data.success) {
+      setModal({
+        open: true,
+        title: "Signup Successful",
+        message: data.message || "Account created successfully"
+      });
       navigate("/login");
     } else {
       setErrors({ general: data.message });
+      setModal({
+        open: true,
+        title: "Signup Failed",
+        message: data.message || "Signup failed. Please try again."
+      });
     }
 
     setIsLoading(false);
@@ -335,6 +347,12 @@ const SignUp = () => {
             Already have an account?{" "}
             <LoginLink onClick={() => navigate("/login")}>Sign In</LoginLink>
           </LoginPrompt>
+          <Modal
+            open={modal.open}
+            title={modal.title}
+            message={modal.message}
+            onClose={() => setModal({ open: false, title: "", message: "" })}
+          />
         </FormContainer>
       </RightSection>
     </SignUpPage>

@@ -1,28 +1,37 @@
 import styled from "styled-components";
 
-export const Layout = styled.div`
-  display: flex;
-  min-height: 100vh;
-`;
-
 export const Main = styled.main`
-  flex: 1;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
 `;
 
 export const ProfileContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  padding: 100px 20px 40px;
+  padding: 50px 20px 40px;
+
+  @media (max-width: 900px) {
+    padding: 36px 16px 32px;
+  }
+
+  @media (max-width: 640px) {
+    padding: 28px 12px 24px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 22px 10px 20px;
+  }
 `;
 
 export const ProfileContent = styled.div`
-  max-width: 600px;
+  width: 100%;
   margin: 0 auto;
+  max-width: 980px;
+
+  @media (max-width: 900px) {
+    max-width: 820px;
+  }
+
+  @media (max-width: 640px) {
+    max-width: 100%;
+  }
 `;
 
 export const ProfileCard = styled.div`
@@ -32,15 +41,42 @@ export const ProfileCard = styled.div`
   padding: 40px;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
+
+  @media (max-width: 900px) {
+    padding: 32px;
+  }
+
+  @media (max-width: 640px) {
+    padding: 24px 18px;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px 14px;
+  }
 `;
 
 export const ProfileHeader = styled.div`
+  height: 300px;
   text-align: center;
+  padding-top: 20px;
   margin-bottom: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+
+  @media (max-width: 900px) {
+    height: 260px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 640px) {
+    height: auto;
+    padding-top: 8px;
+    margin-bottom: 20px;
+    gap: 14px;
+  }
 `;
 
 export const PictureUploadContainer = styled.div`
@@ -51,15 +87,38 @@ export const PictureUploadContainer = styled.div`
 export const ProfilePictureWrapper = styled.div`
   position: relative;
   display: inline-block;
+  width: 150px;
+  height: 150px;
+
+  @media (max-width: 640px) {
+    width: 120px;
+    height: 120px;
+  }
+
+  @media (max-width: 480px) {
+    width: 104px;
+    height: 104px;
+  }
 `;
 
 export const ProfilePicture = styled.img`
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid #3b82f6;
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+
+  @media (max-width: 640px) {
+    width: 120px;
+    height: 120px;
+    border-width: 3px;
+  }
+
+  @media (max-width: 480px) {
+    width: 104px;
+    height: 104px;
+  }
 `;
 
 export const UploadLabel = styled.label`
@@ -82,6 +141,12 @@ export const UploadLabel = styled.label`
     background: #2563eb;
     transform: scale(1.1);
   }
+
+  @media (max-width: 640px) {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
 `;
 
 export const PictureInput = styled.input`
@@ -97,6 +162,10 @@ export const Username = styled.h2`
   font-size: 28px;
   margin: 0 0 8px 0;
   font-weight: 800;
+
+  @media (max-width: 640px) {
+    font-size: 22px;
+  }
 `;
 
 export const Role = styled.p`
@@ -105,6 +174,10 @@ export const Role = styled.p`
   margin: 0;
   text-transform: capitalize;
   font-weight: 600;
+
+  @media (max-width: 640px) {
+    font-size: 14px;
+  }
 `;
 
 export const Position = styled.p`
@@ -112,6 +185,10 @@ export const Position = styled.p`
   font-size: 14px;
   margin: 4px 0 0 0;
   font-weight: 500;
+
+  @media (max-width: 640px) {
+    font-size: 13px;
+  }
 `;
 
 export const SuccessMessage = styled.div`
@@ -124,10 +201,19 @@ export const SuccessMessage = styled.div`
   text-align: center;
   font-size: 14px;
   font-weight: 600;
+
+  @media (max-width: 640px) {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
 `;
 
 export const ProfileSection = styled.div`
   margin: 30px 0 40px 0;
+
+  @media (max-width: 640px) {
+    margin: 22px 0 28px 0;
+  }
 `;
 
 export const SectionTitle = styled.h3`
@@ -137,6 +223,12 @@ export const SectionTitle = styled.h3`
   font-weight: 700;
   border-bottom: 2px solid #3b82f6;
   padding-bottom: 12px;
+
+  @media (max-width: 640px) {
+    font-size: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+  }
 `;
 
 export const InfoGrid = styled.div`
@@ -154,6 +246,10 @@ export const InfoItem = styled.div`
   padding: 16px;
   border-radius: 8px;
   border: 1px solid rgba(148, 163, 184, 0.1);
+
+  @media (max-width: 640px) {
+    padding: 14px;
+  }
 `;
 
 export const InfoLabel = styled.p`
@@ -163,6 +259,10 @@ export const InfoLabel = styled.p`
   font-weight: 700;
   letter-spacing: 0.5px;
   margin: 0 0 8px 0;
+
+  @media (max-width: 640px) {
+    font-size: 11px;
+  }
 `;
 
 export const InfoValue = styled.p`
@@ -171,6 +271,10 @@ export const InfoValue = styled.p`
   margin: 0;
   font-weight: 600;
   word-break: break-word;
+
+  @media (max-width: 640px) {
+    font-size: 14px;
+  }
 `;
 
 export const FormGrid = styled.div`
@@ -195,6 +299,10 @@ export const Label = styled.label`
   color: #e2e8f0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+
+  @media (max-width: 640px) {
+    font-size: 11px;
+  }
 `;
 
 export const Input = styled.input`
@@ -223,6 +331,11 @@ export const Input = styled.input`
     opacity: 0.6;
     cursor: not-allowed;
   }
+
+  @media (max-width: 640px) {
+    height: 42px;
+    font-size: 13px;
+  }
 `;
 
 export const ErrorMsg = styled.span`
@@ -238,6 +351,7 @@ export const ButtonGroup = styled.div`
 
   @media (max-width: 600px) {
     flex-direction: column;
+    gap: 10px;
   }
 `;
 
@@ -257,6 +371,11 @@ export const EditButton = styled.button`
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+  }
+
+  @media (max-width: 640px) {
+    height: 42px;
+    font-size: 14px;
   }
 `;
 

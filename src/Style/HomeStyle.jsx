@@ -155,7 +155,8 @@ export const PublishedPapers = styled.div`
     border: none;
     border-radius: 12px;
     padding: 25px;
-    width: 100%;
+    width: 1000px;
+    max-width: 1200px;
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
@@ -187,6 +188,11 @@ export const PublishedPapers = styled.div`
     span{
       font-size: 14px;
       color: #cbd5e1;
+      display: block;
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     h3 {
@@ -196,6 +202,16 @@ export const PublishedPapers = styled.div`
       font-weight: 700;
       color: #fff;
       letter-spacing: 0.3px;
+    }
+
+    h4 {
+      margin: 8px 0 0;
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     p {
